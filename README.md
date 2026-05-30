@@ -4,7 +4,7 @@ A fully local, modular command-line application built on a Retrieval-Augmented G
 
 The application relies exclusively on open-source models and runs 100% locally on the user's machine—requiring no connection to external, paid APIs.
 
-### 👥 Supported Drivers (Knowledge Base):
+### 👥 Supported Drivers (Knowledge Base [10]):
 1. Alain Prost
 2. Ayrton Senna
 3. Fernando Alonso
@@ -26,6 +26,12 @@ The application relies exclusively on open-source models and runs 100% locally o
 * **Data Chunking & ETL:** `LangChain` (`RecursiveCharacterTextSplitter`) & `PyMuPDF`.
 * **User Interface:** `Rich`.
 
+### 🔓 Why an Open-Source LLM? (The Local Advantage)
+Unlike many wrapper applications that rely on paid cloud APIs (e.g., OpenAI, Anthropic), this project was intentionally built using a local open-source model (`TinyLlama`). This architectural choice guarantees:
+* **100% Data Privacy:** Your F1 queries and retrieved documents never leave your machine.
+* **Zero Cost Architecture:** No API keys, no hidden token fees, and no rate limits.
+* **Offline Inference:** Once the model weights are downloaded, the entire RAG pipeline runs locally on your hardware.
+
 ---
 
 ## 🚀 Setup & Installation (WSL / Linux)
@@ -33,15 +39,24 @@ The application relies exclusively on open-source models and runs 100% locally o
 Follow these steps to recreate the project locally on your machine.
 
 ### Step 1: Project Setup & Virtual Environment (`.venv`)
+First, open your WSL terminal, create a new directory for the project, and navigate into it.
+
 ```bash
 # Create the main folder and navigate into it
 mkdir f1-rag-project
 cd f1-rag-project
+```
 
-# Create and activate a virtual environment
+Next, we must create a **Python Virtual Environment**. In the Python ecosystem, installing dependencies globally is considered a bad practice, as it leads to version conflicts between different projects. We isolate our project's libraries using `.venv`.
+
+```bash
+# Create a virtual environment named '.venv'
 python3 -m venv .venv
+
+# Activate the virtual environment
 source .venv/bin/activate
 ```
+*(You should now see `(.venv)` at the beginning of your terminal prompt, indicating that isolation is active).*
 
 ### Step 2: Populate the Data Directory (PDFs)
 Create the data folder and move your downloaded Wikipedia PDF articles into it.
@@ -55,76 +70,31 @@ mkdir -p data/pdfs
 cp /path/*.pdf data/pdfs/
 ```
 
-### Step 3: Create Project Files via Terminal (`cat`)
-You can generate all necessary configuration and source files directly from the command line using the `cat << 'EOF'` syntax. Paste these blocks sequentially into your terminal.
+### Step 3: Create Project Files
+You can create the necessary files using your preferred code editor, or directly in the terminal using the `cat` command. 
 
-**1. Root Configuration Files**
+Here is a universal example of how to create a file and paste its content via terminal:
 ```bash
-# Create docker-compose.yml
-cat > docker-compose.yml << 'EOF'
-version: "3.8"
-services:
-  qdrant:
-    image: qdrant/qdrant:latest
-    container_name: qdrant
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    volumes:
-      - qdrant_data:/qdrant/storage
-    restart: unless-stopped
-volumes:
-  qdrant_data:
-EOF
-
-# Create requirements.txt
-cat > requirements.txt << 'EOF'
-qdrant-client>=1.9.0
-sentence-transformers>=3.0.0
-transformers>=4.40.0
-torch>=2.2.0
-accelerate>=0.29.0
-pymupdf>=1.24.0
-langchain-text-splitters>=0.2.0
-rich>=13.7.0
-typer>=0.12.0
+cat > filename.ext << 'EOF'
+# [PASTE THE CORRESPONDING CODE FROM THIS REPOSITORY HERE]
 EOF
 ```
 
-**2. Source Code Layer (`src/` directory)**
-First, create the source directory:
-```bash
-mkdir -p src
-```
+Use this method (or your editor) to create the following files and populate them with the code provided in this repository:
 
-*Note: For the Python scripts below, you can copy the full code blocks from this repository's `src/` folder and paste them into your terminal using the same `cat > filename.py << 'EOF'` method, or simply download the repository directly using `git clone`.*
+**Root Directory Files:**
+* `docker-compose.yml` - *Vector database configuration*
+* `requirements.txt` - *Python dependencies*
 
-To manually generate the main application logic via terminal, run the following commands and paste the respective script contents from the repository before typing `EOF`:
-
-```bash
-# 1. Create the Database Retriever module
-cat > src/retriever.py << 'EOF'
-# [PASTE FULL CONTENT OF src/retriever.py HERE]
-EOF
-
-# 2. Create the LLM configuration module
-cat > src/llm.py << 'EOF'
-# [PASTE FULL CONTENT OF src/llm.py HERE]
-EOF
-
-# 3. Create the Data Ingestion pipeline
-cat > src/ingest.py << 'EOF'
-# [PASTE FULL CONTENT OF src/ingest.py HERE]
-EOF
-
-# 4. Create the Command Line Interface
-cat > src/cli.py << 'EOF'
-# [PASTE FULL CONTENT OF src/cli.py HERE]
-EOF
-```
+**Source Code Files (`src/`):**
+First, create the source directory: `mkdir -p src`
+* `src/ingest.py` - *ETL pipeline script*
+* `src/llm.py` - *Local LLM configuration*
+* `src/retriever.py` - *Qdrant database connection*
+* `src/cli.py` - *Terminal interface logic*
 
 ### Step 4: Install Dependencies & Run Database
-Once your files are in place, install the required libraries and start the vector database:
+With your files in place and the virtual environment active, install the required libraries and start the database:
 ```bash
 pip install -r requirements.txt
 docker-compose up -d
