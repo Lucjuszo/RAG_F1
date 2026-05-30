@@ -94,24 +94,15 @@ First, create the source directory: `mkdir -p src`
 * `src/cli.py` - *Terminal interface logic*
 
 ### Step 4: Install Dependencies & Run Database
-Make sure your virtual environment is active, then install the required libraries and start the database:
+With your files in place and the virtual environment active, install the required libraries and start the database:
 ```bash
-# Activate the virtual environment (if you closed the terminal)
-source .venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Start Qdrant in the background
 docker-compose up -d
 ```
 
 ### Step 5: Run the Ingestion Pipeline & CLI
-With the database running and the `.venv` active, process the documents and start the conversational agent:
+Process the documents and start the conversational agent:
 ```bash
-# Ensure .venv is active
-source .venv/bin/activate
-
 # Upload documents and generate embeddings in Qdrant
 python src/ingest.py
 
