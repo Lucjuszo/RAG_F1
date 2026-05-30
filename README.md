@@ -55,28 +55,73 @@ mkdir -p data/pdfs
 cp /path/*.pdf data/pdfs/
 ```
 
-### Step 3: Create Project Files
-Create the following files in your project directory and paste the corresponding code from this repository.
+### Step 3: Create Project Files via Terminal (`cat`)
+You can generate all necessary configuration and source files directly from the command line using the `cat << 'EOF'` syntax. Paste these blocks sequentially into your terminal.
 
-**1. `docker-compose.yml`** (Root directory)
-```yaml
-# Paste the contents of docker-compose.yml here
+**1. Root Configuration Files**
+```bash
+# Create docker-compose.yml
+cat > docker-compose.yml << 'EOF'
+version: "3.8"
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+volumes:
+  qdrant_data:
+EOF
+
+# Create requirements.txt
+cat > requirements.txt << 'EOF'
+qdrant-client>=1.9.0
+sentence-transformers>=3.0.0
+transformers>=4.40.0
+torch>=2.2.0
+accelerate>=0.29.0
+pymupdf>=1.24.0
+langchain-text-splitters>=0.2.0
+rich>=13.7.0
+typer>=0.12.0
+EOF
 ```
 
-**2. `requirements.txt`** (Root directory)
-```text
-# Paste the contents of requirements.txt here
-```
-
-**3. Source Code** (Inside the `src/` directory)
+**2. Source Code Layer (`src/` directory)**
+First, create the source directory:
 ```bash
 mkdir -p src
 ```
-Create the following Python scripts inside the `src/` folder:
-* `src/ingest.py` - *ETL pipeline script*
-* `src/llm.py` - *Local LLM configuration*
-* `src/retriever.py` - *Qdrant database connection*
-* `src/cli.py` - *Terminal interface logic*
+
+*Note: For the Python scripts below, you can copy the full code blocks from this repository's `src/` folder and paste them into your terminal using the same `cat > filename.py << 'EOF'` method, or simply download the repository directly using `git clone`.*
+
+To manually generate the main application logic via terminal, run the following commands and paste the respective script contents from the repository before typing `EOF`:
+
+```bash
+# 1. Create the Database Retriever module
+cat > src/retriever.py << 'EOF'
+# [PASTE FULL CONTENT OF src/retriever.py HERE]
+EOF
+
+# 2. Create the LLM configuration module
+cat > src/llm.py << 'EOF'
+# [PASTE FULL CONTENT OF src/llm.py HERE]
+EOF
+
+# 3. Create the Data Ingestion pipeline
+cat > src/ingest.py << 'EOF'
+# [PASTE FULL CONTENT OF src/ingest.py HERE]
+EOF
+
+# 4. Create the Command Line Interface
+cat > src/cli.py << 'EOF'
+# [PASTE FULL CONTENT OF src/cli.py HERE]
+EOF
+```
 
 ### Step 4: Install Dependencies & Run Database
 Once your files are in place, install the required libraries and start the vector database:
